@@ -1,86 +1,56 @@
 {\rtf1\ansi\ansicpg1252\cocoartf2511
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red42\green55\blue62;\red238\green240\blue241;
-\red24\green25\blue27;\red21\green129\blue62;\red35\green38\blue42;\red235\green236\blue237;}
-{\*\expandedcolortbl;;\csgray\c0;\cssrgb\c21569\c27843\c30980;\cssrgb\c94510\c95294\c95686;
-\cssrgb\c12549\c12941\c14118;\cssrgb\c5098\c56471\c30980;\cssrgb\c18431\c20000\c21569;\cssrgb\c93725\c94118\c94510;}
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
 \paperw11900\paperh16840\margl1440\margr1440\vieww17680\viewh8760\viewkind0
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\deftab720
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\ri-340\partightenfactor0
 
-\f0\fs24 \cf0 \
+\f0\fs20 \cf0 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
-
-\f1\fs22 \cf2 \CocoaLigature0 /Users/bonaventurapacileo/google-cloud-sdk/bin/gsutil \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri-340\partightenfactor0
+\cf0 /Users/bonaventurapacileo/google-cloud-sdk/bin/gsutil \
 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
-
-\fs26  /Users/bonaventurapacileo/google-cloud-sdk/bin/gcloud config set project PROJECT-ID\
+ /Users/bonaventurapacileo/google-cloud-sdk/bin/gcloud config set project PROJECT-ID\
 \
 \
 /Users/bonaventurapacileo/google-cloud-sdk/bin/gsutil mb -b on -l us-west1 gs://NAME-bucket/\
 \
 \
-/Users/bonaventurapacileo/google-cloud-sdk/bin/
-\f0\fs28 \cf3 \cb4 \expnd0\expndtw0\kerning0
-\CocoaLigature1 gcloud iam service-accounts create 
-\f1\fs26 \cf2 \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 ROLENAME
-\f0\fs28 \cf3 \cb4 \expnd0\expndtw0\kerning0
-\CocoaLigature1 \
+/Users/bonaventurapacileo/google-cloud-sdk/bin/gcloud iam service-accounts create ROLENAME\
 \
 \
-
-\f1\fs26 \cf2 \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 /Users/bonaventurapacileo/google-cloud-sdk/bin/
-\f0\fs32 \cf5 \expnd0\expndtw0\kerning0
-\CocoaLigature1 gcloud projects add-iam-policy-binding 
-\f1\fs26 \cf2 \kerning1\expnd0\expndtw0 \CocoaLigature0 PROJECT-ID
-\f0\fs32 \cf5 \expnd0\expndtw0\kerning0
-\CocoaLigature1  --member "serviceAccount:NAMEID@
-\f1\fs26 \cf2 \kerning1\expnd0\expndtw0 \CocoaLigature0 PROJECT-ID
-\f0\fs32 \cf5 \expnd0\expndtw0\kerning0
-\CocoaLigature1 .iam.gserviceaccount.com" --role "roles/owner"
-\f1\fs26 \cf2 \kerning1\expnd0\expndtw0 \CocoaLigature0 \
+/Users/bonaventurapacileo/google-cloud-sdk/bin/gcloud projects add-iam-policy-binding PROJECT-ID --member "serviceAccount:NAMEID@PROJECT-ID.iam.gserviceaccount.com" --role "roles/owner"\
 \
 \
-/Users/bonaventurapacileo/google-cloud-sdk/bin/
-\f0\fs32 \cf5 \expnd0\expndtw0\kerning0
-\CocoaLigature1 gcloud iam service-accounts keys create FILENAME.json --iam-account 
-\f1\fs26 \cf2 \kerning1\expnd0\expndtw0 \CocoaLigature0 ROLENAME@PROJECTID.
-\f0\fs32 \cf5 \expnd0\expndtw0\kerning0
-\CocoaLigature1 iam.gserviceaccount.com\
+/Users/bonaventurapacileo/google-cloud-sdk/bin/gcloud iam service-accounts keys create FILENAME.json --iam-account ROLENAME@PROJECTID.iam.gserviceaccount.com\
 \
-
-\fs28 \cf3 \cb4 export GOOGLE_APPLICATION_CREDENTIALS=\cf6 \'93path/keyfilename.json"\
+export GOOGLE_APPLICATION_CREDENTIALS=\'93path/keyfilename.json"\
 \
-\pard\pardeftab720\partightenfactor0
-
-\f1\fs26 \cf7 \cb8 chmod +x genv-setup.sh\
+\pard\pardeftab720\ri-340\partightenfactor0
+\cf0 chmod +x genv-setup.sh\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
-\cf2 \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 /Users/bonaventurapacileo/google-cloud-sdk/bin/gsutil mb -b on -l us-west1 gs://NAME-bucket/\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri-340\partightenfactor0
+\cf0 /Users/bonaventurapacileo/google-cloud-sdk/bin/gsutil mb -b on -l us-west1 gs://NAME-bucket/\
 \
 connected gc source repositories to github\
-\pard\pardeftab720\partightenfactor0
-\cf7 \cb8 \expnd0\expndtw0\kerning0
-\CocoaLigature1 \
+\pard\pardeftab720\ri-340\partightenfactor0
+\cf0 \
 \
 # no need to call the sdk using the full path, not sure if permanent tho\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
-\cf2 \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 source /pathto/google-cloud-sdk/path.bash.inc\cf7 \cb8 \expnd0\expndtw0\kerning0
-\CocoaLigature1 \
-\cf2 \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 source /pathto/google-cloud-sdk/completion.bash.inc\cf7 \cb8 \expnd0\expndtw0\kerning0
-\CocoaLigature1 \
-\pard\pardeftab720\partightenfactor0
-\cf7 #####\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri-340\partightenfactor0
+\cf0 source /pathto/google-cloud-sdk/path.bash.inc\
+source /pathto/google-cloud-sdk/completion.bash.inc\
+\pard\pardeftab720\ri-340\partightenfactor0
+\cf0 #####\
 ##create g cloud function\
 \
 \
 #enable apis\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
-\cf2 \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 gcloud functions deploy hello_gcs_generic --runtime python37 --trigger-resource physio-bucket --trigger-event google.storage.object.finalize\
-\pard\pardeftab720\partightenfactor0
-\cf7 \cb8 \expnd0\expndtw0\kerning0
-\CocoaLigature1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\ri-340\partightenfactor0
+\cf0 gcloud functions deploy hello_gcs_generic --runtime python37 --trigger-resource physio-bucket --trigger-event google.storage.object.finalize\
+\pard\pardeftab720\ri-340\partightenfactor0
+\cf0 \
 # filename must be main.py\
 }

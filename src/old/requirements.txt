@@ -1,0 +1,9 @@
+tensorflow
+pandas
+numpy
+sklearn
+google-cloud-storage
+scipy
+tempfile
+datetime
+os

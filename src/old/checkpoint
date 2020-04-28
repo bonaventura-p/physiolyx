@@ -1,2 +1,2 @@
-model_checkpoint_path: "model_ep04_val0.25"
-all_model_checkpoint_paths: "model_ep04_val0.25"
+model_checkpoint_path: "model_ep01_val0.16"
+all_model_checkpoint_paths: "model_ep01_val0.16"

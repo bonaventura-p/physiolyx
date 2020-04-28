@@ -18,10 +18,10 @@ from tensorflow.keras.layers import Dense, Conv1D, Dropout, LSTM,
 from tensorflow.keras.callbacks import ModelCheckpoint
 
 
-from helpers.analytics import featureProcess, trainer
-from helpers.analytics import sceneDict, rotRescaler, valDivider, metscoreCalc, tableProcess
+from helpers.analytics import featureProcessor, modelFitter, actionPredictor, predWrapper
+from helpers.analytics import sceneDict, rotRescaler, valDivider, metscoreCalc, tableProcessor, labelProcessor
 from helpers.filemanager import blobDownloader, blobUploader, tableReader, colBlank
-from helpers.model import SimpleLSTM, DeepConvLSTM
+from helpers.model import DeepLSTM, DeepConvLSTM
 
 
 client = storage.Client()
@@ -29,25 +29,6 @@ client = storage.Client()
 #for warm invocations
 model = None
     
-def predictor(bucket, name, table):
-    global model
-
-    # Model load which only happens during cold starts
-    if model is None:
-        blobDownloader('physio-bucket', 'model_ep04_val0.25.index', '/tmp/model_ep04_val0.25.index')
-        blobDownloader('physio-bucket', 'model_ep04_val0.25.data-00000-of-00001', '/tmp/model_ep04_val0.25.data-00000-of-00001')
-        model = SimpleLSTM()
-        model.load_weights('/tmp/model_ep04_val0.25')
-    
-    pred = featureProcess(table, cols, timeSteps=72, step=14, time='serve')
-    pred = model.call(pred)
-    
-    print(pred)
-    
-    class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
-               'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
-        
-    return class_names[numpy.argmax(predictions)]
 
 
 def monitorDataLambda(data, context):
@@ -69,12 +50,14 @@ def monitorDataLambda(data, context):
     
     table_data = tableReader('file.txt')
 
-    table_data = tableProcess(table_data, data)
+    table_data = tableProcessor(table_data, data)
 
     ###8. KDE.py TBD
 
     ### 9. HAR.py TBD
-    
+    table_data['predAction'] = predWrapper(table_data,data['bucket'])
+
+
     ### 10. export as csv to out-bucket
     table.to_csv('/tmp/test.csv', header=True, index=False) #temp becomes the infile
     

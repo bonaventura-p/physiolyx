@@ -7,7 +7,7 @@ from tensorflow.keras import Model
 from tensorflow.keras.callbacks import ModelCheckpoint
 
 
-from helpers.model import SimpleLSTM, DeepConvLSTM
+from helpers.model import DeepLSTM, DeepConvLSTM
 from helpers.filemanager import colBlank
 
 
@@ -22,7 +22,7 @@ def sceneDict(table):
     return table['scene_index']
 
 
-def rotRescaler(val, D=360, serve=False):
+def rotRescaler(val, D=360, serve=True):
     '''add descr'''
     if serve:
         return (np.where(val > D / 2, -1*(val - D), 0),np.where(val > D / 2, 0, val))
@@ -53,7 +53,7 @@ def metscoreCalc(scene, table):
 
     return metscore
 
-def tableProcess(table, data, train= False):
+def tableProcessor(table, data, serve= True):
     '''add descr'''
     '''data(dict): The Cloud Functions event payload.'''
 
@@ -81,7 +81,10 @@ def tableProcess(table, data, train= False):
             "left_rotx", "left_roty", "left_rotz"]
 
     for col in cols:
-        table[str(col + "_n")], table[col] = rotRescaler(table[col], serve)
+        if serve:
+            table[str(col + "_n")], table[col] = rotRescaler(table[col], serve=serve)
+        else:
+            table[col] = rotRescaler(table[col], serve=serve)
 
     ### 7. compute MET score at frame level ###
     table['met_score'] = metscoreCalc('scene_index', table)
@@ -98,8 +101,8 @@ def tableProcess(table, data, train= False):
     return table
 
 
-def featureProcess(df, cols, timeSteps=72, step=14, time='serve'):
-    '''preprocessing. WORKS ONE MARKER AT THE TIME'''
+def featureProcessor(df, cols, timeSteps=72, step=14, serve=True):
+    '''preprocessing. WORKS ONE MARKER AT THE TIME. WATCH OUT FOR OUTPUTNAMES'''
 
     if cols is None:
         cols = ["head_rotx","head_roty","head_rotz"]
@@ -109,35 +112,33 @@ def featureProcess(df, cols, timeSteps=72, step=14, time='serve'):
     coldict = {}
 
     #fill 0's
-    df = df.fillna(0)
-    
+    if [colBlank(df, col=c) for c in cols]:
+        print('Missing features, filling with 0\'s')
+        df = df.fillna(0)
+        
     #normalise data otherwise loss= nan
     for col in cols:
         df[col] = (df[col] - df[col].min())/(df[col].max()-df[col].min())
 
     #we reshape into 3d arrays of length equal to timesteps. final df is= (N*timesteps*features)
-    if time=='train':
+    if serve:
         
-        print(time)
+        for i in range(0, len(df), timeSteps):
+            
+            for col in cols:
+
+                coldict[str(col[5:])] = df[col].values[i: i + timeSteps]
+                segments.append(coldict[str(col[5:])])
+
+    else:     
         
         for i in range(0, len(df) - timeSteps, step):
+            
             for col in cols:
 
-                coldict[str(col[5:])] = table[col].values[i: i + timeSteps]
-
+                coldict[str(col[5:])] = df[col].values[i: i + timeSteps]
                 segments.append(coldict[str(col[5:])])
    
-    elif time == 'serve':
-        
-        print(time)
-        
-        for i in range(0, len(df) - timeSteps, timeSteps):
-            for col in cols:
-
-                coldict[str(col[5:])] = table[col].values[i: i + timeSteps]
-
-                segments.append(coldict[str(col[5:])])
-            
     reshaped_segments = np.asarray(segments, dtype= np.float32).reshape(-1, timeSteps, features)
 
     print('Preprocessing completed')
@@ -145,12 +146,12 @@ def featureProcess(df, cols, timeSteps=72, step=14, time='serve'):
     return reshaped_segments
 
 
-def labelProcess(df, timeSteps, step, method='last'):
+def labelProcessor(df, timeSteps=72, step=14, method='last'):
     '''add descr'''
     
     labels = []
     
-    if colBlank(df, cols='action'):
+    if colBlank(df, col='action'):
         print('Missing labels, filling with 0\'s')
         df = df.fillna(0)
     
@@ -178,10 +179,56 @@ def reshuffler(df, div=70):
     return np.random.shuffle(df.values.reshape(-1,int(np.floor(df.shape[0]/div)),df.shape[1]))
 
     
-def trainer(model, epochs=40, batch_size=12):
+def modelFitter(X,y, model, epochs=1, batch_size=12):
     '''removed .hdf5 from filename'''
+    
+    # define loss and optimizer
+    adam = optimizers.Adam(learning_rate=0.001) #(ordo learning_rate=0.01, decay=0.9)
+
+    model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['categorical_accuracy']) #sparse categorical crossentropy if labels not one-hot encoded
+    model.save_weights('model.h5')
+    model.load_weights('model.h5')
+    
     callbacks = ModelCheckpoint('model_ep{epoch:02d}_val{val_categorical_accuracy:.2f}', monitor='val_categorical_accuracy', verbose=0,
                                 save_best_only=True, save_weights_only=True, mode='max')
     history = model.fit(X,y, validation_split = 0.2, batch_size = 12,
                 epochs = epochs, callbacks = [callbacks])
+    
     return history
+
+
+def actionPredictor(bucket, df):
+    global model
+
+    # Model load which only happens during cold starts
+    if model is None:
+        blobDownloader(bucket, 'model_ep04_val0.25.index', '/tmp/model_ep04_val0.25.index')
+        blobDownloader(bucket, 'model_ep04_val0.25.data-00000-of-00001', '/tmp/model_ep04_val0.25.data-00000-of-00001')
+        
+        model = DeepLSTM(timeSteps=72, n_features=3, n_classes=10)
+        model.load_weights('/tmp/model_ep04_val0.25')
+    
+    class_names=['RROT', 'EXTE', 'LROT', 'FLEX', 'RBEN', 'LBEN', '3DLEX', '3DREX',
+       '3DLFL', '3DRFL']
+    
+    actionPred = []
+    
+    for r in range(df.shape[0]):  
+        pred = model.call(df[r:r+1])
+        actionPred.append(class_names[np.argmax(pred)])
+
+    return actionPred
+
+
+def predWrapper(df,bucket):
+        '''add descr'''
+           
+        Xpred = featureProcessor(df, cols=None)
+        ypred = actionPredictor(bucket, Xpred)
+        
+        #reshape predicted actions into table shape
+        action = [ypred[val] for val in range(len(ypred)) for _ in range(timeSteps)]
+        [action.append(ypred[len(ypred)-1]) for _ in range(1,1+len(df)-len(action))]
+
+        return action
+

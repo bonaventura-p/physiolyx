@@ -31,7 +31,7 @@ model = None
     
 
 
-def monitorDataLambda(data, context):
+def monitorDataLambdaML(data, context):
     """Background Cloud Function to be triggered by Cloud Storage.
        This generic function logs relevant data when a file is changed.
 

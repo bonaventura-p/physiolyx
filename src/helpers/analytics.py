@@ -8,7 +8,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 
 
 from helpers.model import DeepLSTM, DeepConvLSTM
-from helpers.filemanager import colBlank
+from helpers.filemanager import colBlank, blobDownloader
 
 
 def sceneDict(table):
@@ -197,8 +197,8 @@ def modelFitter(X,y, model, epochs=1, batch_size=12):
     return history
 
 
-def actionPredictor(bucket, df):
-    global model
+
+def actionPredictor(bucket, df, timeSteps=72, model=None):
 
     # Model load which only happens during cold starts
     if model is None:
@@ -220,11 +220,11 @@ def actionPredictor(bucket, df):
     return actionPred
 
 
-def predWrapper(df,bucket):
+def predWrapper(df,bucket, timeSteps=72, model=None):
         '''add descr'''
-           
-        Xpred = featureProcessor(df, cols=None)
-        ypred = actionPredictor(bucket, Xpred)
+                    
+        Xpred = featureProcessor(df, timeSteps=timeSteps, cols=None)
+        ypred = actionPredictor(bucket, Xpred, timeSteps=timeSteps, model=model)
         
         #reshape predicted actions into table shape
         action = [ypred[val] for val in range(len(ypred)) for _ in range(timeSteps)]

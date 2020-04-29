@@ -55,11 +55,11 @@ def monitorDataLambda(data, context):
     ###8. KDE.py TBD
 
     ### 9. HAR.py TBD
-    table_data['predAction'] = predWrapper(table_data,data['bucket'])
+    table_data['predAction'] = predWrapper(table_data, timeSteps=72, data['bucket'])
 
 
     ### 10. export as csv to out-bucket
-    table.to_csv('/tmp/test.csv', header=True, index=False) #temp becomes the infile
+    table_data.to_csv('/tmp/test.csv', header=True, index=False) #temp becomes the infile
     
     blobUploader('physio-out-bucket', '/tmp/test.csv', str(data['name'][:22]+'.csv'))
 

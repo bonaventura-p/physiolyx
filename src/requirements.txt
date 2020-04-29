@@ -4,7 +4,4 @@ datetime
 numpy
 tensorflow
 sklearn
-google-cloud-storage
 scipy
-tempfile
-os

@@ -2,6 +2,6 @@ pandas
 google-cloud-storage
 datetime
 numpy
-tensorflow
+tensorflow == 2.0.0
 sklearn
 scipy

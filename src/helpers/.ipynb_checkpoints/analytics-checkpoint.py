@@ -97,11 +97,14 @@ def tableProcessor(table, data, serve= True):
 
     ### 10. drop unused columns ###
     table = table.drop('index ms_lastline'.split(), axis=1)
-
+    
+    
+    print("Completed data preparation")
+    
     return table
 
 
-def featureProcessor(df, cols, timeSteps=72, step=14, serve=True):
+def featureProcessor(df, cols=None, timeSteps=72, step=14, serve=True):
     '''preprocessing. WORKS ONE MARKER AT THE TIME. WATCH OUT FOR OUTPUTNAMES'''
 
     if cols is None:
@@ -123,7 +126,7 @@ def featureProcessor(df, cols, timeSteps=72, step=14, serve=True):
     #we reshape into 3d arrays of length equal to timesteps. final df is= (N*timesteps*features)
     if serve:
         
-        for i in range(0, len(df), timeSteps):
+        for i in range(0, len(df)-timeSteps, timeSteps):
             
             for col in cols:
 
@@ -138,7 +141,8 @@ def featureProcessor(df, cols, timeSteps=72, step=14, serve=True):
 
                 coldict[str(col[5:])] = df[col].values[i: i + timeSteps]
                 segments.append(coldict[str(col[5:])])
-   
+    
+    len(segments)
     reshaped_segments = np.asarray(segments, dtype= np.float32).reshape(-1, timeSteps, features)
 
     print('Preprocessing completed')
@@ -167,11 +171,11 @@ def labelProcessor(df, timeSteps=72, step=14, method='last'):
         labels.append(label)
     
     labels = pd.get_dummies(labels)
-    truelabels= pd.get_dummies(labels).idxmax(1)
+    #truelabels= pd.get_dummies(labels).idxmax(1)
     labels = np.asarray(labels, dtype = np.float32)
 
 
-    return labels, truelabels
+    return labels
 
 
 def reshuffler(df, div=70):

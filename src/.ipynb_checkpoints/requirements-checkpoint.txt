@@ -1,0 +1,7 @@
+pandas
+google-cloud-storage
+datetime
+numpy
+tensorflow
+sklearn
+scipy

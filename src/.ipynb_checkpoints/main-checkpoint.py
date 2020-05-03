@@ -1,4 +1,4 @@
-# [START functions_monitorDataLambda]
+# [START ]
 
 import numpy as np
 import pandas as pd
@@ -26,9 +26,7 @@ import helpers.model
 
 client = storage.Client()
 
-#for warm invocations
-model = None
-    
+#add fix for warm invocations
 
 
 def monitorDataLambda(data, context):
@@ -48,14 +46,14 @@ def monitorDataLambda(data, context):
 
     blobDownloader(data['bucket'], data['name'], 'file.txt')
     
-    table_data = tableReader('file.txt')
+    table_data = tableReader('file.txt', cols=None)
 
-    table_data = tableProcessor(table_data, data)
+    table_data = tableProcessor(table_data, data, serve= True)
 
     ###8. KDE.py TBD
 
     ### 9. HAR.py TBD
-    table_data['predAction'] = predWrapper(table_data, timeSteps=72, data['bucket'])
+    table_data['predAction'] = predWrapper(table_data, bucket=data['bucket'],timeSteps=72)
 
 
     ### 10. export as csv to out-bucket
@@ -64,8 +62,8 @@ def monitorDataLambda(data, context):
     blobUploader('physio-out-bucket', '/tmp/test.csv', str(data['name'][:22]+'.csv'))
 
 
-
-# [END functions_monitorDataLambda]
+    
+# [END ]
 
 
 

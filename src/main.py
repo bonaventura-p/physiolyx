@@ -1,27 +1,10 @@
 # [START ]
 
-import numpy as np
 import pandas as pd
 from google.cloud import storage
-import datetime
-import os
-import tempfile
-from scipy import stats
-import tensorflow as tf
 
-from sklearn import metrics
-from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
-
-from tensorflow.keras import Model, initializers, optimizers, regularizers
-from tensorflow.keras.layers import Dense, Conv1D, Dropout, LSTM
-from tensorflow.keras.callbacks import ModelCheckpoint
-
-
-import helpers.analytics
-import helpers.filemanager
-import helpers.model
-
+from helpers.analytics import tableProcessor, predWrapper
+from helpers.filemanager import blobDownloader, blobUploader, tableReader
 
 
 client = storage.Client()

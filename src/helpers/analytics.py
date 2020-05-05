@@ -25,9 +25,9 @@ def sceneDict(table):
 def rotRescaler(val, D=360, serve=True):
     '''add descr'''
     if serve:
-        return (np.where(val > D / 2, -1*(val - D), 0),np.where(val > D / 2, 0, val))
+        return (np.where(val > D / 2, (val - D), val),np.where(val > D / 2, 0, val), np.where(val > D / 2, -1*(val - D), 0)) #old, neg, pos
     else:
-        return (np.where(val > D / 2, (val - D), val))
+        return (np.where(val > D / 2, (val - D), val)) #old
 
     
 def valDivider(table, k=1000):
@@ -77,14 +77,13 @@ def tableProcessor(table, data, serve= True):
     #table['seconds'] = np.cumsum(diff).astype(int)
 
     ### 6. rescale rotations ###
-    cols = ["head_rotx", "head_roty", "head_rotz", "right_rotx", "right_roty", "right_rotz",
-            "left_rotx", "left_roty", "left_rotz"]
+    cols = ["head_rotx", "head_roty", "head_rotz"] #add hands later on
 
     for col in cols:
         if serve:
-            table[str(col + "_n")], table[col] = rotRescaler(table[col], serve=serve)
+            table[col], table[str(col + "_n")], table[str(col + "_p")] = rotRescaler(table[col], serve=serve) #old, neg, pos
         else:
-            table[col] = rotRescaler(table[col], serve=serve)
+            table[col] = rotRescaler(table[col], serve=serve) #old only
 
     ### 7. compute MET score at frame level ###
     table['met_score'] = metscoreCalc('scene_index', table)

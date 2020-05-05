@@ -6,6 +6,7 @@ import pandas as pd
 
 def blobDownloader(bucket_name, source_blob_name, destination_file_name):
     """Downloads a blob from the bucket."""
+
     client = storage.Client()
     bucket = client.get_bucket(bucket_name)
     blob = bucket.get_blob(source_blob_name)

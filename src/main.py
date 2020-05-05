@@ -7,7 +7,6 @@ from helpers.analytics import tableProcessor, predWrapper
 from helpers.filemanager import blobDownloader, blobUploader, tableReader
 
 
-client = storage.Client()
 
 #add fix for warm invocations
 
@@ -22,14 +21,17 @@ def monitorDataLambda(data, context):
     Returns:
         None; the output is written to Stackdriver Logging
     """
-    print('Event ID: {}'.format(context.event_id))
-    print('Event type: {}'.format(context.event_type))
+
+    #client = storage.Client()
+
+    #print('Event ID: {}'.format(context.event_id))
+    #print('Event type: {}'.format(context.event_type))
     print('Bucket: {}'.format(data['bucket']))
     print('File: {}'.format(data['name']))
 
-    blobDownloader(data['bucket'], data['name'], 'file.txt')
-    
-    table_data = tableReader('file.txt', cols=None)
+    blobDownloader(data['bucket'], data['name'], '/tmp/file.txt')
+
+    table_data = tableReader('/tmp/file.txt', cols=None)
 
     table_data = tableProcessor(table_data, data, serve= True)
 

@@ -1,6 +1,6 @@
 
 
-from src.main import monitorDataLambda
+#from src.main import monitorDataLambda
 import pytest
 
 data = {'bucket':'test-physio-bucket', 'name':'monitorData 03-02-2020.txt'}

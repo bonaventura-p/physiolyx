@@ -16,6 +16,8 @@ data = {'bucket':'test-physio-bucket', 'name':'monitorData 03-02-2020.txt'}
 
 # do the tables coincide except for ML
 
+assert data['bucket'] == 'test-physio-bucket'
+
 
 
 print('pytest completed')

@@ -36,13 +36,9 @@ steps:
   # using the verbose flag so you can see each individual test.
 - name: 'gcr.io/cloud-builders/gcloud'
   id: 'cf_deploy'
-  args:
-  - functions
-  - deploy
-  - monitorDataLambda
-  - --source= ./src/
-  - --runtime= python37
-  - --trigger-resource physio-bucket
-  - --trigger-event google.storage.object.finalize
-  - --memory 1024
-  - --timeout 180
+  args: ['functions','deploy', 'monitorDataLambda',
+         'source', './src/',
+         'runtime', 'python37',
+         'trigger-resource', 'physio-bucket',
+         'trigger-event', 'google.storage.object.finalize',
+         'memory', '1024','timeout','180']

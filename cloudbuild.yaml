@@ -40,9 +40,9 @@ steps:
   - functions
   - deploy
   - monitorDataLambda
-  -  --source = ./src/
+  - --source= ./src/
   - --runtime= python37
   - --trigger-resource physio-bucket
-  -  --trigger-event google.storage.object.finalize
+  - --trigger-event google.storage.object.finalize
   - --memory 1024
-  -  --timeout 180
+  - --timeout 180

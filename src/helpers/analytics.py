@@ -7,8 +7,8 @@ from tensorflow.keras import Model
 from tensorflow.keras.callbacks import ModelCheckpoint
 
 
-from helpers.model import DeepLSTM, DeepConvLSTM
-from helpers.filemanager import colBlank, blobDownloader
+from .model import DeepLSTM, DeepConvLSTM
+from .filemanager import colBlank, blobDownloader
 
 
 def sceneDict(table):

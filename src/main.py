@@ -1,7 +1,11 @@
 # [START ]
 
-import pandas as pd
+import pandas as pd #to_csv
 from google.cloud import storage
+
+import sys
+
+sys.path.append('./src')
 
 from helpers.analytics import tableProcessor, predWrapper
 from helpers.filemanager import blobDownloader, blobUploader, tableReader
@@ -22,10 +26,6 @@ def monitorDataLambda(data, context):
         None; the output is written to Stackdriver Logging
     """
 
-    #client = storage.Client()
-
-    #print('Event ID: {}'.format(context.event_id))
-    #print('Event type: {}'.format(context.event_type))
     print('Bucket: {}'.format(data['bucket']))
     print('File: {}'.format(data['name']))
 
@@ -35,21 +35,16 @@ def monitorDataLambda(data, context):
 
     table_data = tableProcessor(table_data, data, serve= True)
 
-    ###8. KDE.py TBD
+    ###add KDE
 
-    ### 9. HAR.py TBD
     table_data['predAction'] = predWrapper(table_data, bucket=data['bucket'],timeSteps=72)
 
-
-    ### 10. export as csv to out-bucket
     table_data.to_csv('/tmp/test.csv', header=True, index=False) #temp becomes the infile
-    
-    blobUploader('physio-out-bucket', '/tmp/test.csv', str(data['name'][:22]+'.csv'))
+
+    buckets_dict = {'physio-bucket':'physio-out-bucket','test-physio-bucket':'test-physio-out-bucket'}
+
+    blobUploader(buckets_dict[data['bucket']], '/tmp/test.csv', str(data['name'][:22]+'.csv'))
 
 
-    
+
 # [END ]
-
-
-
-
